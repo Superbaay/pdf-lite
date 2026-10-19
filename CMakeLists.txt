@@ -6,7 +6,7 @@ if(DEFINED ENV{VCPKG_DEFAULT_BINARY_CACHE})
 endif()
 
 project(pdf_lite
-    VERSION 0.0.1
+    VERSION 0.6.0
     DESCRIPTION "Visor y editor de PDF ligero"
     LANGUAGES C CXX)
 

@@ -1,0 +1,29 @@
+# Salidas de compilación (siempre dentro del repo, nunca versionadas)
+/build/
+/out/
+/vcpkg/
+/.vcpkg-cache/
+vcpkg_installed/
+
+# Herramientas / editores
+/.vs/
+/.cache/
+.vscode/ipch/
+.vscode/*.log
+compile_commands.json
+CMakeUserPresets.json
+
+# Binarios
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.obj
+
+# PDFs personales: las pruebas generan sus PDFs en memoria
+*.pdf
+
+# Sistema
+Thumbs.db
+desktop.ini

@@ -86,9 +86,7 @@ std::expected<std::unique_ptr<App>, std::string> App::create(int argc, char** ar
     } else if (char* pref = SDL_GetPrefPath("pdf-lite", "pdf-lite"); pref != nullptr) {
         const std::string pref_utf8{pref};
         SDL_free(pref);
-        app->m_settings_path =
-            core::path_from_utf8(pref_utf8) /
-            "settings.json";
+        app->m_settings_path = core::path_from_utf8(pref_utf8) / "settings.json";
         if (auto loaded = core::load_settings(app->m_settings_path)) {
             app->m_settings = std::move(*loaded);
         }

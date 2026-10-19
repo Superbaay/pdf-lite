@@ -1,6 +1,7 @@
 #include "app/app.hpp"
 
 #include "app/dialogs.hpp"
+#include "core/utf.hpp"
 #include "core/version.hpp"
 #include "modules/annotations/annotations_module.hpp"
 #include "modules/export/export_module.hpp"
@@ -35,8 +36,7 @@ constexpr auto toast_duration = std::chrono::milliseconds{3200};
 constexpr int caret_blink_ms = 530;
 
 std::string to_utf8(const std::filesystem::path& p) {
-    const auto u8 = p.u8string();
-    return {u8.begin(), u8.end()};
+    return core::path_to_utf8(p);
 }
 
 // Registro de módulos en tiempo de compilación: para añadir uno nuevo basta con
@@ -73,7 +73,9 @@ std::expected<std::unique_ptr<App>, std::string> App::create(int argc, char** ar
     auto app = std::make_unique<App>(PrivateTag{});
 
     const char* base = SDL_GetBasePath();
-    app->m_assets_dir = std::filesystem::path{base != nullptr ? base : ""} / "assets";
+    // SDL devuelve UTF-8: convertir con path_from_utf8 (ver core/utf.hpp) o una
+    // carpeta con acentos rompería la carga de fuentes.
+    app->m_assets_dir = core::path_from_utf8(base != nullptr ? base : "") / "assets";
 
     // Configuración en la carpeta de datos de la app (%APPDATA%\pdf-lite\).
     if (!options.settings_path.empty()) {
@@ -85,7 +87,7 @@ std::expected<std::unique_ptr<App>, std::string> App::create(int argc, char** ar
         const std::string pref_utf8{pref};
         SDL_free(pref);
         app->m_settings_path =
-            std::filesystem::path{std::u8string{pref_utf8.begin(), pref_utf8.end()}} /
+            core::path_from_utf8(pref_utf8) /
             "settings.json";
         if (auto loaded = core::load_settings(app->m_settings_path)) {
             app->m_settings = std::move(*loaded);
@@ -138,7 +140,7 @@ std::expected<std::unique_ptr<App>, std::string> App::create(int argc, char** ar
     static_cast<void>(options.hidden); // la ventana nace oculta; run() la muestra
     if (argc > 1 && argv[1] != nullptr) {
         const std::string arg{argv[1]};
-        app->open_document(std::filesystem::path{std::u8string{arg.begin(), arg.end()}});
+        app->open_document(core::path_from_utf8(arg));
     }
     return app;
 }
@@ -309,7 +311,7 @@ void App::handle_event(const SDL_Event& event) {
     case SDL_EVENT_DROP_FILE:
         if (event.drop.data != nullptr) {
             const std::string utf8{event.drop.data};
-            const std::filesystem::path path{std::u8string{utf8.begin(), utf8.end()}};
+            const std::filesystem::path path = core::path_from_utf8(utf8);
             auto ext = path.extension().u8string();
             std::ranges::transform(ext, ext.begin(), [](char8_t ch) {
                 return static_cast<char8_t>(std::tolower(ch));

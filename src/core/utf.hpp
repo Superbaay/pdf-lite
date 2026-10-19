@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <string_view>
 
@@ -72,6 +73,18 @@ inline std::string utf16_to_utf8(std::u16string_view in) {
         }
     }
     return out;
+}
+
+// Rutas <-> UTF-8. OJO: en Windows, std::filesystem::path{std::string} interpreta
+// los bytes en la página de códigos ANSI, NO en UTF-8: una carpeta con "ñ" se
+// convierte en basura. SDL y ImGui hablan UTF-8, así que siempre pasamos por aquí.
+inline std::filesystem::path path_from_utf8(std::string_view utf8) {
+    return std::filesystem::path{std::u8string{utf8.begin(), utf8.end()}};
+}
+
+inline std::string path_to_utf8(const std::filesystem::path& path) {
+    const auto u8 = path.u8string();
+    return {u8.begin(), u8.end()};
 }
 
 } // namespace core

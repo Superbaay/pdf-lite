@@ -1,5 +1,7 @@
 #include "app/dialogs.hpp"
 
+#include "core/utf.hpp"
+
 #include <SDL3/SDL_dialog.h>
 
 #include <memory>
@@ -21,7 +23,7 @@ void SDLCALL dialog_callback(void* userdata, const char* const* filelist, int /*
         return; // error o cancelado
     }
     const std::string utf8{filelist[0]};
-    request->on_chosen(std::filesystem::path{std::u8string{utf8.begin(), utf8.end()}});
+    request->on_chosen(core::path_from_utf8(utf8));
 }
 
 constexpr SDL_DialogFileFilter pdf_filter[] = {{"Documentos PDF", "pdf"}};
@@ -35,8 +37,7 @@ void show_file_dialog(SDL_Window* window, DialogKind kind,
     // La API de SDL es de C: recibe un void* "userdata". Le cedemos la
     // propiedad de un Request (release) y dialog_callback la recupera.
     auto request = std::make_unique<Request>(Request{std::move(on_chosen)});
-    const auto location_u8 = default_location.u8string();
-    const std::string location{location_u8.begin(), location_u8.end()};
+    const std::string location = core::path_to_utf8(default_location);
     const char* loc = location.empty() ? nullptr : location.c_str();
     switch (kind) {
     case DialogKind::open_pdf:

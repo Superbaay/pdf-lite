@@ -165,3 +165,10 @@ TEST_CASE("UTF-8 <-> UTF-16 conserva acentos, ñ y emoji") {
     CHECK(core::utf8_to_utf16("ñ") == u"ñ");
     CHECK(core::utf8_to_utf16("😀").size() == 2); // par sustituto
 }
+
+TEST_CASE("Rutas UTF-8: una carpeta con ñ sobrevive la ida y vuelta") {
+    const std::string utf8 = "C:/Usuarios/Iñaki/Año 2026/pdf-lite/assets";
+    const auto path = core::path_from_utf8(utf8);
+    CHECK(path.wstring() == L"C:/Usuarios/Iñaki/Año 2026/pdf-lite/assets");
+    CHECK(core::path_to_utf8(path) == utf8);
+}

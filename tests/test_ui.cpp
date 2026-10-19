@@ -5,6 +5,7 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "app/app.hpp"
+#include "core/utf.hpp"
 
 #include <SDL3/SDL.h>
 #define SDL_MAIN_HANDLED // main() propio: solo necesitamos SDL_SetMainReady
@@ -316,7 +317,7 @@ public:
     bool page_has_ink(const std::string& name) {
         const auto path = out_dir() / (name + ".bmp");
         REQUIRE(m_app->capture(path));
-        SDL_Surface* raw = SDL_LoadBMP(path.string().c_str());
+        SDL_Surface* raw = SDL_LoadBMP(core::path_to_utf8(path).c_str());
         REQUIRE(raw != nullptr);
         SDL_Surface* s = SDL_ConvertSurface(raw, SDL_PIXELFORMAT_RGBA32);
         SDL_DestroySurface(raw);
@@ -661,7 +662,7 @@ TEST_CASE("Imágenes: insertar desde archivo y moverla") {
     SDL_Surface* surface = SDL_CreateSurface(64, 32, SDL_PIXELFORMAT_RGBA32);
     REQUIRE(surface != nullptr);
     SDL_FillSurfaceRect(surface, nullptr, SDL_MapSurfaceRGBA(surface, 255, 0, 0, 255));
-    REQUIRE(SDL_SaveBMP(surface, image.string().c_str()));
+    REQUIRE(SDL_SaveBMP(surface, core::path_to_utf8(image).c_str()));
     SDL_DestroySurface(surface);
 
     const auto before = d.objects(0).size();

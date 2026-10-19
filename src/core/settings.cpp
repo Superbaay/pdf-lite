@@ -1,5 +1,7 @@
 #include "core/settings.hpp"
 
+#include "core/utf.hpp"
+
 #include <nlohmann/json.hpp>
 
 #include <algorithm>
@@ -12,13 +14,9 @@ namespace core {
 namespace {
 
 // Las rutas se guardan en UTF-8 para que acentos y ñ sobrevivan en JSON.
-std::string path_to_utf8(const std::filesystem::path& p) {
-    const auto u8 = p.u8string();
-    return {u8.begin(), u8.end()};
-}
-
+using core::path_to_utf8;
 std::filesystem::path utf8_to_path(const std::string& s) {
-    return std::filesystem::path{std::u8string{s.begin(), s.end()}};
+    return core::path_from_utf8(s);
 }
 
 bool same_file(const std::filesystem::path& a, const std::filesystem::path& b) {

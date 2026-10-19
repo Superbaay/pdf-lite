@@ -33,6 +33,9 @@ Fases 1 a 6. Se desarrollaron en conjunto, así que se publican juntas.
 - Iconos que mostraban letras: Inter tiene glifos en la zona de uso privado de Unicode
   (se excluye esa zona de Inter y se limita Lucide a ella).
 - El cambio de tema a mitad de cuadro dejaba colores del tema anterior.
+- La app no arrancaba desde carpetas con acentos o ñ: `std::filesystem::path{std::string}`
+  usa la página de códigos ANSI en Windows. Ahora toda conversión pasa por
+  `core::path_from_utf8` / `core::path_to_utf8`.
 
 ### Cambiado
 - Sin `-Wdouble-promotion` en clang-cl (la API de PDFium usa `double`; solo era ruido).

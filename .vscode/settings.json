@@ -1,0 +1,22 @@
+{
+  // CMake Tools lee CMakePresets.json y carga el entorno de MSVC (vcvars) solo.
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": true,
+  "cmake.buildBeforeRun": true,
+  "cmake.ctest.testExplorerIntegrationEnabled": true,
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.formatting": "clangFormat",
+  "editor.formatOnSave": true,
+  "[cpp]": { "editor.defaultFormatter": "ms-vscode.cpptools" },
+  "files.exclude": {
+    "build/": true,
+    "out/": true,
+    ".vcpkg-cache/": true
+  },
+  "search.exclude": {
+    "vcpkg/": true,
+    "build/": true
+  },
+  "files.associations": { "*.hpp.in": "cpp" }
+}

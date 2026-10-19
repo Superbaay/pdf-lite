@@ -1,0 +1,43 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // F5: compila (preLaunchTask) y lanza con el depurador de Visual Studio.
+      "name": "pdf-lite (depurar)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "preLaunchTask": "CMake: compilar"
+    },
+    {
+      "name": "pdf-lite (abrir un PDF)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "args": ["${input:pdfPath}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "CMake: compilar"
+    },
+    {
+      "name": "Pruebas (depurar)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${command:cmake.activeConfigurePresetName}/tests/pdflite_tests.exe",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "CMake: compilar"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "pdfPath",
+      "type": "promptString",
+      "description": "Ruta del PDF a abrir"
+    }
+  ]
+}

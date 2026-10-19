@@ -45,3 +45,4 @@ set_target_properties(pdfium PROPERTIES
     IMPORTED_IMPLIB "${_pdfium_root}/lib/pdfium.dll.lib"
     INTERFACE_INCLUDE_DIRECTORIES "${_pdfium_root}/include")
 set(PDFLITE_PDFIUM_DLL "${_pdfium_root}/bin/pdfium.dll")
+set(PDFLITE_PDFIUM_ROOT "${_pdfium_root}")

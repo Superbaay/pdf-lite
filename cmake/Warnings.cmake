@@ -13,8 +13,9 @@ function(pdflite_set_warnings target)
         if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${target} PRIVATE
                 -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align
-                -Wnull-dereference -Wdouble-promotion
-                # Nombres de PDFium/SDL vienen en macros de C: demasiado ruido.
+                -Wnull-dereference
+                # Sin -Wdouble-promotion: la API de PDFium usa double en todas partes
+                # y float->double nunca pierde precisión (solo sería ruido).
                 -Wno-c++98-compat -Wno-c++98-compat-pedantic)
         endif()
     endif()

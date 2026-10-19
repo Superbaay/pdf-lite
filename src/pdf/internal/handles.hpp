@@ -10,6 +10,7 @@
 // automáticamente al salir de ámbito, incluso en retornos tempranos, y nunca
 // escribimos FPDF_Close*() a mano.
 
+#include <fpdf_annot.h>
 #include <fpdf_edit.h>
 #include <fpdf_text.h>
 #include <fpdfview.h>
@@ -31,6 +32,20 @@ struct BitmapCloser {
 struct TextPageCloser {
     void operator()(FPDF_TEXTPAGE text) const noexcept { FPDFText_ClosePage(text); }
 };
+struct SearchCloser {
+    void operator()(FPDF_SCHHANDLE handle) const noexcept { FPDFText_FindClose(handle); }
+};
+// Solo para objetos que NO están en ninguna página (al insertarlos, la página
+// pasa a ser su dueña y hay que hacer release()).
+struct PageObjectDestroyer {
+    void operator()(FPDF_PAGEOBJECT obj) const noexcept { FPDFPageObj_Destroy(obj); }
+};
+struct FontCloser {
+    void operator()(FPDF_FONT font) const noexcept { FPDFFont_Close(font); }
+};
+struct AnnotCloser {
+    void operator()(FPDF_ANNOTATION annot) const noexcept { FPDFPage_CloseAnnot(annot); }
+};
 
 // FPDF_DOCUMENT es "struct fpdf_document_t__*": unique_ptr necesita el tipo
 // apuntado, por eso usamos remove_pointer_t.
@@ -38,5 +53,9 @@ using DocumentPtr = std::unique_ptr<std::remove_pointer_t<FPDF_DOCUMENT>, Docume
 using PagePtr = std::unique_ptr<std::remove_pointer_t<FPDF_PAGE>, PageCloser>;
 using BitmapPtr = std::unique_ptr<std::remove_pointer_t<FPDF_BITMAP>, BitmapCloser>;
 using TextPagePtr = std::unique_ptr<std::remove_pointer_t<FPDF_TEXTPAGE>, TextPageCloser>;
+using SearchPtr = std::unique_ptr<std::remove_pointer_t<FPDF_SCHHANDLE>, SearchCloser>;
+using PageObjectPtr = std::unique_ptr<std::remove_pointer_t<FPDF_PAGEOBJECT>, PageObjectDestroyer>;
+using FontPtr = std::unique_ptr<std::remove_pointer_t<FPDF_FONT>, FontCloser>;
+using AnnotPtr = std::unique_ptr<std::remove_pointer_t<FPDF_ANNOTATION>, AnnotCloser>;
 
 } // namespace pdf::internal

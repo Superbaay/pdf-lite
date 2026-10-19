@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "pdf-lite",
+  "version-semver": "0.0.1",
+  "description": "Visor y editor de PDF ligero, local y de código abierto.",
+  "license": "MIT",
+  "builtin-baseline": "fdd4e6059c803f56bb5df86e285bf374d9d44407",
+  "dependencies": [
+    "sdl3",
+    {
+      "name": "imgui",
+      "features": ["sdl3-binding", "sdl3-renderer-binding"]
+    },
+    "stb",
+    "nlohmann-json",
+    "doctest"
+  ]
+}

@@ -1,0 +1,7 @@
+#pragma once
+
+// Generado por CMake a partir de version.hpp.in; no editar a mano.
+namespace core {
+inline constexpr const char* app_name = "pdf-lite";
+inline constexpr const char* app_version = "@PROJECT_VERSION@";
+} // namespace core

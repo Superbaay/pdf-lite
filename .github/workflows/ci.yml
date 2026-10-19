@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar formato
+        shell: pwsh
+        run: ./scripts/format.ps1 -Check
+
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [msvc-release, clang-release]
+    env:
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg-cache
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar vcpkg (commit fijado en vcpkg.json)
+        shell: pwsh
+        run: ./scripts/bootstrap.ps1
+
+      - name: Caché de binarios de vcpkg
+        uses: actions/cache@v4
+        with:
+          path: .vcpkg-cache
+          key: vcpkg-${{ matrix.preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: vcpkg-${{ matrix.preset }}-
+
+      - name: Entorno de MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Configurar
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Compilar
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Pruebas
+        run: ctest --preset ${{ matrix.preset }}
